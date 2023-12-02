@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <table>
+        <tr>
+            <td>Leagues Tier</td>
+            <td colspan="4">
+                <select id="leagues_tier">
+                    <option value=1>1 (5x XP, 1x Points)</option>
+                    <option value=2>2 (8x XP, 1x Points)</option>
+                    <option value=3>3 (8x XP, 1x Points)</option>
+                    <option value=4>4 (8x XP, 1x Points)</option>
+                    <option value=5>5 (12x XP, 5x Points)</option>
+                    <option value=6>6 (12x XP, 5x Points)</option>
+                    <option value=7>7 (16x XP, 8x Points)</option>
+                    <option value=8>8 (16x XP, 8x Points)</option>
+                </select>
+            </td>
+        </tr>
+        <tr>
+            <td>Boat</td>
+            <td colspan="4">
+                <select id="pc_boat">
+                    <option value=3>Novice</option>
+                    <option value=4>Intermediate</option>
+                    <option value=5>Veteran</option>
+                </select>
+            </td>
+        </tr>
+        <tr>
+            <td>Highest Complete Ach. Tier</td>
+            <td colspan="4">
+                <select id="ach_tier">
+                    <option value=0>None</option>
+                    <option value=1>Easy</option>
+                    <option value=2>Medium</option>
+                    <option value=3>Hard+</option>
+                </select>
+            </td>
+        </tr>
+        <tr>
+            <td>Points per Trade</td>
+            <td colspan="4">
+                <select id="points_traded">
+                    <option value=1>1</option>
+                    <option value=10>10</option>
+                    <option value=100>100</option>
+                </select>
+            </td>
+        </tr>
+        <tr>
+            <td><b>Attack</b></td>
+            <td>Current XP</td>
+            <td><input type="text" id="xp_attack" value=0></td>
+            <td>Goal Level</td>
+            <td><input type="text" id="goal_attack" value=99></td>
+            <td>Points Required:</td>
+            <td id="req_attack">0</td>
+        </tr>
+        <tr>
+            <td><b>Strength</b></td>
+            <td>Current XP</td>
+            <td><input type="text" id="xp_strength" value=0></td>
+            <td>Goal Level</td>
+            <td><input type="text" id="goal_strength" value=99></td>
+            <td>Points Required:</td>
+            <td id="req_strength">0</td>
+        </tr>
+        <tr>
+            <td><b>Defence</b></td>
+            <td>Current XP</td>
+            <td><input type="text" id="xp_defence" value=0></td>
+            <td>Goal Level</td>
+            <td><input type="text" id="goal_defence" value=99></td>
+            <td>Points Required:</td>
+            <td id="req_defence">0</td>
+        </tr>
+        <tr>
+            <td><b>Hitpoints</b></td>
+            <td>Current XP</td>
+            <td><input type="text" id="xp_hitpoints" value=1000></td>
+            <td>Goal Level</td>
+            <td><input type="text" id="goal_hitpoints" value=99></td>
+            <td>Points Required:</td>
+            <td id="req_hitpoints">0</td>
+        </tr>
+        <tr>
+            <td><b>Ranged</b></td>
+            <td>Current XP</td>
+            <td><input type="text" id="xp_ranged" value=0></td>
+            <td>Goal Level</td>
+            <td><input type="text" id="goal_ranged" value=99></td>
+            <td>Points Required:</td>
+            <td id="req_ranged">0</td>
+        </tr>
+        <tr>
+            <td><b>Magic</b></td>
+            <td>Current XP</td>
+            <td><input type="text" id="xp_magic" value=0></td>
+            <td>Goal Level</td>
+            <td><input type="text" id="goal_magic" value=99></td>
+            <td>Points Required:</td>
+            <td id="req_magic">0</td>
+        </tr>
+        <tr>
+            <td><b>Prayer</b></td>
+            <td>Current XP</td>
+            <td><input type="text" id="xp_prayer" value=0></td>
+            <td>Goal Level</td>
+            <td><input type="text" id="goal_prayer" value=99></td>
+            <td>Points Required:</td>
+            <td id="req_prayer">0</td>
+        </tr>
+        <tr>
+            <td><input type="button" id="calc_btn" value="Calculate"></td>
+        </tr>
+    </table>
+    <div id="output"></div>
+    <script>
+        const experience = { // [ATK/STR/DEF/HP, RNG/MAG, PRAY]
+            25: [35,32,18],
+            35: [70,64,36],
+            43: [105,96,54],
+            49: [140, 128, 72],
+            55: [175,160,90],
+            60: [210,192,108],
+            65: [245,224,126],
+            70: [280,256,144],
+            74: [315,288,162],
+            78: [350,320,180],
+            82: [385,352,198],
+            85: [420,384,216],
+            89: [455,416,234],
+            92: [490,448,252],
+            95: [525,480,270],
+            98: [560,512,288]
+        }
+
+        // const XPMultiplier = 16;
+        // const pointsPerGame = 40;
+
+        const levelExperience = [
+  {"Level": 1, "Exp": 0},
+  {"Level": 2, "Exp": 83},
+  {"Level": 3, "Exp": 174},
+  {"Level": 4, "Exp": 276},
+  {"Level": 5, "Exp": 388},
+  {"Level": 6, "Exp": 512},
+  {"Level": 7, "Exp": 650},
+  {"Level": 8, "Exp": 801},
+  {"Level": 9, "Exp": 969},
+  {"Level": 10, "Exp": 1154},
+  {"Level": 11, "Exp": 1358},
+  {"Level": 12, "Exp": 1584},
+  {"Level": 13, "Exp": 1833},
+  {"Level": 14, "Exp": 2107},
+  {"Level": 15, "Exp": 2411},
+  {"Level": 16, "Exp": 2746},
+  {"Level": 17, "Exp": 3115},
+  {"Level": 18, "Exp": 3523},
+  {"Level": 19, "Exp": 3973},
+  {"Level": 20, "Exp": 4470},
+  {"Level": 21, "Exp": 5018},
+  {"Level": 22, "Exp": 5624},
+  {"Level": 23, "Exp": 6291},
+  {"Level": 24, "Exp": 7028},
+  {"Level": 25, "Exp": 7842},
+  {"Level": 26, "Exp": 8740},
+  {"Level": 27, "Exp": 9730},
+  {"Level": 28, "Exp": 10824},
+  {"Level": 29, "Exp": 12031},
+  {"Level": 30, "Exp": 13363},
+  {"Level": 31, "Exp": 14833},
+  {"Level": 32, "Exp": 16456},
+  {"Level": 33, "Exp": 18247},
+  {"Level": 34, "Exp": 20224},
+  {"Level": 35, "Exp": 22406},
+  {"Level": 36, "Exp": 24815},
+  {"Level": 37, "Exp": 27473},
+  {"Level": 38, "Exp": 30408},
+  {"Level": 39, "Exp": 33648},
+  {"Level": 40, "Exp": 37224},
+  {"Level": 41, "Exp": 41171},
+  {"Level": 42, "Exp": 45529},
+  {"Level": 43, "Exp": 50339},
+  {"Level": 44, "Exp": 55649},
+  {"Level": 45, "Exp": 61512},
+  {"Level": 46, "Exp": 67983},
+  {"Level": 47, "Exp": 75127},
+  {"Level": 48, "Exp": 83014},
+  {"Level": 49, "Exp": 91721},
+  {"Level": 50, "Exp": 101333},
+  {"Level": 51, "Exp": 111945},
+  {"Level": 52, "Exp": 123660},
+  {"Level": 53, "Exp": 136594},
+  {"Level": 54, "Exp": 150872},
+  {"Level": 55, "Exp": 166636},
+  {"Level": 56, "Exp": 184040},
+  {"Level": 57, "Exp": 203254},
+  {"Level": 58, "Exp": 224466},
+  {"Level": 59, "Exp": 247886},
+  {"Level": 60, "Exp": 273742},
+  {"Level": 61, "Exp": 302288},
+  {"Level": 62, "Exp": 333804},
+  {"Level": 63, "Exp": 368599},
+  {"Level": 64, "Exp": 407015},
+  {"Level": 65, "Exp": 449428},
+  {"Level": 66, "Exp": 496254},
+  {"Level": 67, "Exp": 547953},
+  {"Level": 68, "Exp": 605032},
+  {"Level": 69, "Exp": 668051},
+  {"Level": 70, "Exp": 737627},
+  {"Level": 71, "Exp": 814445},
+  {"Level": 72, "Exp": 899257},
+  {"Level": 73, "Exp": 992895},
+  {"Level": 74, "Exp": 1096278},
+  {"Level": 75, "Exp": 1210421},
+  {"Level": 76, "Exp": 1336443},
+  {"Level": 77, "Exp": 1475581},
+  {"Level": 78, "Exp": 1629200},
+  {"Level": 79, "Exp": 1798808},
+  {"Level": 80, "Exp": 1986068},
+  {"Level": 81, "Exp": 2192818},
+  {"Level": 82, "Exp": 2421087},
+  {"Level": 83, "Exp": 2673114},
+  {"Level": 84, "Exp": 2951373},
+  {"Level": 85, "Exp": 3258594},
+  {"Level": 86, "Exp": 3597792},
+  {"Level": 87, "Exp": 3972294},
+  {"Level": 88, "Exp": 4385776},
+  {"Level": 89, "Exp": 4842295},
+  {"Level": 90, "Exp": 5346332},
+  {"Level": 91, "Exp": 5902831},
+  {"Level": 92, "Exp": 6517253},
+  {"Level": 93, "Exp": 7195629},
+  {"Level": 94, "Exp": 7944614},
+  {"Level": 95, "Exp": 8771558},
+  {"Level": 96, "Exp": 9684577},
+  {"Level": 97, "Exp": 10692629},
+  {"Level": 98, "Exp": 11805606},
+  {"Level": 99, "Exp": 13034431}
+]
+
+        function getLevel(xp){
+            console.log(xp);
+            return levelExperience.filter(l => xp >= l.Exp).reverse()[0].Level;
+        }
+
+        function getLevelExperience(level){
+            return levelExperience.filter(l => l.Level == level)[0].Exp;
+        }
+
+        function getThreshold(xp){
+            const l = getLevel(xp);
+            // console.log(l);
+            let t;
+
+            let highestThreshold = 0;
+            for(k in experience){
+                if(l >= k) highestThreshold = k;
+            }
+
+            return highestThreshold;
+            
+        }
+
+        function calcPointsRequired(startXP, endXP, pointsPerTrade, skill, XPMultiplier){
+            let bonus = {
+                1: 1,
+                10: 1.01,
+                100: 1.1
+            }[pointsPerTrade];
+
+            let skillIndex = {
+                "attack": 0,
+                "strength": 0,
+                "defence": 0,
+                "hitpoints": 0,
+                "ranged": 1,
+                "magic": 1,
+                "prayer": 2
+            }
+
+            let skillN = {
+                "attack": 35,
+                "strength": 35,
+                "defence": 35,
+                "hitpoints": 35,
+                "ranged": 32,
+                "magic": 32,
+                "prayer": 18
+            }
+
+            let currentXP = startXP;
+            let pointsUsed = 0;
+
+            while(currentXP < endXP){
+                // let t = getThreshold(currentXP);
+                let tradeXP = Math.floor(Math.pow(getLevel(currentXP),2)/600)*skillN[skill];
+                
+                let additionalXP = tradeXP*pointsPerTrade*bonus*XPMultiplier;
+                console.log(`(${currentXP}) +${additionalXP} XP`);
+                currentXP += additionalXP;
+                pointsUsed += pointsPerTrade
+            }
+            
+            return pointsUsed;
+        }
+
+        document.getElementById('calc_btn').onclick = function(){
+            let XPMultiplier = [5,8,8,8,12,12,16,16][document.getElementById('leagues_tier').value-1];
+            let pointsMultiplier = [1,1,1,1,5,5,8,8][document.getElementById('leagues_tier').value-1];
+
+            console.log(XPMultiplier);
+            let pointsPerTrade = parseInt(document.getElementById('points_traded').value);
+            
+            let pointsPerGame = pointsMultiplier*(parseInt(document.getElementById('pc_boat').value) + parseInt(document.getElementById('ach_tier').value));
+
+            ["attack","strength","defence","hitpoints","ranged","magic","prayer"].forEach(skill => {
+                let current = parseInt(document.getElementById(`xp_${skill}`).value);
+
+                if(getLevel(current) < 25){
+                    return;
+                }
+                let goal = parseInt(document.getElementById(`goal_${skill}`).value);
+
+
+                let req = calcPointsRequired(current, getLevelExperience(goal), pointsPerTrade, skill, XPMultiplier);
+                document.getElementById(`req_${skill}`).innerHTML = `${req} (${Math.ceil(req/pointsPerGame)} games)`;
+            });
+        };
+
+        // document.getElementById('output').innerHTML = `
+        //     Attack: 2419222 = ${calcPointsRequired(2419222,13034431,100,"attack")} <br>
+        //     Strength: 745557 = ${calcPointsRequired(745557,13034431,100,"strength")} <br>
+        //     Magic: 979170 = ${calcPointsRequired(979170,13034431,100,"magic")} <br>
+        //     Prayer: 886883 = ${calcPointsRequired(886883,13034431,100,"prayer")} <br>
+
+        // `;
+        
+    </script>
+</body>
+</html>
